@@ -6,6 +6,9 @@
  * - Subtraction
  * - Multiplication
  * - Division
+ * - Modulo
+ * - Exponentiation
+ * - Square root
  */
 
 function toNumber(value, name) {
@@ -38,6 +41,26 @@ function divide(a, b) {
   return a / b;
 }
 
+function modulo(a, b) {
+  if (b === 0) {
+    throw new RangeError('Cannot take modulo by zero.');
+  }
+
+  return a % b;
+}
+
+function power(base, exponent) {
+  return base ** exponent;
+}
+
+function squareRoot(n) {
+  if (n < 0) {
+    throw new RangeError('Cannot take the square root of a negative number.');
+  }
+
+  return Math.sqrt(n);
+}
+
 function resolveOperation(operation) {
   switch (operation) {
     case 'add':
@@ -52,9 +75,18 @@ function resolveOperation(operation) {
     case 'divide':
     case '/':
       return divide;
+    case 'modulo':
+    case '%':
+      return modulo;
+    case 'power':
+    case '^':
+      return power;
+    case 'squareRoot':
+    case 'sqrt':
+      return squareRoot;
     default:
       throw new Error(
-        `Unknown operation "${operation}". Use add, subtract, multiply, or divide.`,
+        `Unknown operation "${operation}". Use add, subtract, multiply, divide, modulo, power, or squareRoot.`,
       );
   }
 }
@@ -62,11 +94,27 @@ function resolveOperation(operation) {
 function main(argv = process.argv.slice(2)) {
   const [operation, leftValue, rightValue] = argv;
 
-  if (!operation || leftValue === undefined || rightValue === undefined) {
+  if (!operation) {
     throw new Error('Usage: node src/calculator.js <operation> <left> <right>');
   }
 
   const calculate = resolveOperation(operation);
+
+  if (calculate === squareRoot) {
+    if (leftValue === undefined) {
+      throw new Error('Usage: node src/calculator.js squareRoot <value>');
+    }
+
+    const value = toNumber(leftValue, 'Value');
+    return calculate(value);
+  }
+
+  if (leftValue === undefined || rightValue === undefined) {
+    throw new Error(
+      'Usage: node src/calculator.js <operation> <left> <right>',
+    );
+  }
+
   const left = toNumber(leftValue, 'Left operand');
   const right = toNumber(rightValue, 'Right operand');
 
@@ -88,6 +136,9 @@ module.exports = {
   subtract,
   multiply,
   divide,
+  modulo,
+  power,
+  squareRoot,
   main,
   resolveOperation,
   toNumber,

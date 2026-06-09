@@ -30,6 +30,36 @@ test('throws when dividing by zero', () => {
   });
 });
 
+test('calculates modulo', () => {
+  assert.equal(calculator.modulo(10, 3), 1);
+  assert.equal(calculator.modulo(-10, 3), -1);
+});
+
+test('throws when taking modulo by zero', () => {
+  assert.throws(() => calculator.modulo(8, 0), {
+    name: 'RangeError',
+    message: 'Cannot take modulo by zero.',
+  });
+});
+
+test('raises numbers to a power', () => {
+  assert.equal(calculator.power(2, 3), 8);
+  assert.equal(calculator.power(9, 0.5), 3);
+});
+
+test('calculates square roots', () => {
+  assert.equal(calculator.squareRoot(9), 3);
+  assert.equal(calculator.squareRoot(2), Math.sqrt(2));
+  assert.equal(calculator.squareRoot(16), 4);
+});
+
+test('throws for negative square roots', () => {
+  assert.throws(() => calculator.squareRoot(-1), {
+    name: 'RangeError',
+    message: 'Cannot take the square root of a negative number.',
+  });
+});
+
 test('resolves supported operations', () => {
   assert.equal(calculator.resolveOperation('add'), calculator.add);
   assert.equal(calculator.resolveOperation('+'), calculator.add);
@@ -39,6 +69,15 @@ test('resolves supported operations', () => {
   assert.equal(calculator.resolveOperation('*'), calculator.multiply);
   assert.equal(calculator.resolveOperation('divide'), calculator.divide);
   assert.equal(calculator.resolveOperation('/'), calculator.divide);
+  assert.equal(calculator.resolveOperation('modulo'), calculator.modulo);
+  assert.equal(calculator.resolveOperation('%'), calculator.modulo);
+  assert.equal(calculator.resolveOperation('power'), calculator.power);
+  assert.equal(calculator.resolveOperation('^'), calculator.power);
+  assert.equal(
+    calculator.resolveOperation('squareRoot'),
+    calculator.squareRoot,
+  );
+  assert.equal(calculator.resolveOperation('sqrt'), calculator.squareRoot);
 });
 
 test('throws for unknown operations', () => {
@@ -64,6 +103,12 @@ test('runs the CLI calculation flow', () => {
   assert.equal(calculator.main(['subtract', '10', '4']), 6);
   assert.equal(calculator.main(['multiply', '45', '2']), 90);
   assert.equal(calculator.main(['divide', '20', '5']), 4);
+  assert.equal(calculator.main(['modulo', '10', '3']), 1);
+  assert.equal(calculator.main(['%', '5', '2']), 1);
+  assert.equal(calculator.main(['power', '2', '3']), 8);
+  assert.equal(calculator.main(['^', '2', '3']), 8);
+  assert.equal(calculator.main(['squareRoot', '9']), 3);
+  assert.equal(calculator.main(['sqrt', '16']), 4);
 });
 
 test('requires a full CLI argument set', () => {
